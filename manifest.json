@@ -1,0 +1,21 @@
+{
+  "name": "Caramel POS",
+  "short_name": "Caramel",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fdfaf6",
+  "theme_color": "#d97736",
+  "description": "Sistema de Punto de Venta para Pastelería Caramel",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Q5NzczNiIgcng9IjIwIi8+CiAgPHBhdGggZD0iTTM1LDc1IEw2NSw3NSBMNzAsNTAgTDMwLDUwIFoiIGZpbGw9IiNmZGZhZjYiLz4KICA8cGF0aCBkPSJNMzAsNTAgQzMwLDM1IDcwLDM1IDcwLDUwIFoiIGZpbGw9IiNmZGZhZjYiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjMwIiByPSI2IiBmaWxsPSIjZTUzOTM1Ii8+Cjwvc3ZnPg==",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2Q5NzczNiIgcng9IjIwIi8+CiAgPHBhdGggZD0iTTM1LDc1IEw2NSw3NSBMNzAsNTAgTDMwLDUwIFoiIGZpbGw9IiNmZGZhZjYiLz4KICA8cGF0aCBkPSJNMzAsNTAgQzMwLDM1IDcwLDM1IDcwLDUwIFoiIGZpbGw9IiNmZGZhZjYiLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjMwIiByPSI2IiBmaWxsPSIjZTUzOTM1Ii8+Cjwvc3ZnPg==",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

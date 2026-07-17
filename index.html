@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caramel POS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#d97736">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Panel Izquierdo: Productos -->
+        <main class="products-panel">
+            <header class="header">
+                <div class="logo-container">
+                    <img id="store-logo" src="" alt="Caramel Logo" class="logo">
+                    <h1>Caramel</h1>
+                </div>
+                <div style="display:flex; gap:10px; width: 100%;">
+                    <button id="btn-summary" class="btn-secondary" style="flex:1;">📊 Cierre</button>
+                    <button id="btn-history" class="btn-secondary" style="flex:1;">Historial</button>
+                </div>
+            </header>
+            
+            <div class="products-grid" id="products-grid">
+                <!-- Productos generados dinámicamente aquí -->
+            </div>
+        </main>
+
+        <!-- Panel Derecho: Cajero / Carrito -->
+        <aside class="cart-panel">
+            <h2>Orden Actual</h2>
+            <div class="cart-items" id="cart-items">
+                <!-- Items del carrito -->
+                <div class="empty-cart">Selecciona productos para comenzar</div>
+            </div>
+            
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-amount">$0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="total-amount">$0.00</span>
+                </div>
+            </div>
+
+            <div class="checkout-section">
+                <div class="payment-methods">
+                    <label class="radio-label">
+                        <input type="radio" name="payment-method" value="cash" checked> Efectivo
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment-method" value="qr"> Pago QR
+                    </label>
+                </div>
+
+                <div id="cash-payment-section">
+                    <label for="cash-received">Efectivo Recibido ($)</label>
+                    <input type="number" id="cash-received" placeholder="Ej. 50" min="0" step="0.01">
+                    
+                    <div class="change-display">
+                        <span>Cambio a devolver:</span>
+                        <span id="change-amount">$0.00</span>
+                    </div>
+                </div>
+
+                <div id="qr-payment-section" style="display:none; text-align:center;">
+                    <img id="qr-image" src="" alt="Código QR de Pago" class="qr-thumbnail" title="Haz clic para agrandar">
+                    <p style="font-size: 13px; color: var(--text-light); margin-bottom: 24px;">Toca la imagen para agrandarla.</p>
+                </div>
+                
+                <button id="btn-checkout" class="btn-primary" disabled>Cobrar Venta</button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal de Historial -->
+    <div id="history-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <header class="modal-header">
+                <h2>Historial de Transacciones</h2>
+                <button id="btn-close-modal" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-content" id="history-list">
+                <!-- Historial generado aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal del QR Gigante -->
+    <div id="qr-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <header class="modal-header" style="border:none; padding-bottom: 0;">
+                <h2 style="text-align: center; width:100%;">Escanea para pagar</h2>
+                <button id="btn-close-qr" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-content" style="text-align:center;">
+                <img id="qr-image-large" src="" alt="QR Gigante" style="width:100%; max-width:400px; border-radius:16px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cierre de Caja -->
+    <div id="summary-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <header class="modal-header">
+                <h2>Cierre de Caja</h2>
+                <button id="btn-close-summary" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-content" id="summary-content">
+                <!-- Se inyectará el reporte aquí -->
+            </div>
+            <div style="padding:24px; border-top:1px solid var(--border); display:flex; gap:16px; flex-wrap:wrap;">
+                <button id="btn-download-pdf" class="btn-primary" style="flex:1;">Descargar PDF</button>
+                <button id="btn-clear-history" class="btn-secondary" style="border-color:var(--danger); color:var(--danger);">Limpiar Historial</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación emergente -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
