@@ -1,4 +1,4 @@
-const CACHE_NAME = 'caramel-pos-v5';
+const CACHE_NAME = 'caramel-pos-v6';
 const urlsToCache = [
   './',
   './index.html',
