@@ -19,9 +19,11 @@
                     <img id="store-logo" src="" alt="Caramel Logo" class="logo">
                     <h1>Caramel</h1>
                 </div>
-                <div style="display:flex; gap:10px; width: 100%;">
-                    <button id="btn-summary" class="btn-secondary" style="flex:1;">📊 Cierre</button>
-                    <button id="btn-history" class="btn-secondary" style="flex:1;">Historial</button>
+                <div style="display:flex; gap:10px; width: 100%; flex-wrap: wrap;">
+                    <button id="btn-planilla" class="btn-secondary" style="flex:1; background:var(--primary); color:white; border:none; min-width:80px;">📝 Planilla</button>
+                    <button id="btn-stock" class="btn-secondary" style="flex:1; min-width:80px;">📦 Stock Diario</button>
+                    <button id="btn-summary" class="btn-secondary" style="flex:1; min-width:80px;">📊 Cierre</button>
+                    <button id="btn-history" class="btn-secondary" style="flex:1; min-width:80px;">Historial</button>
                 </div>
             </header>
             
@@ -118,6 +120,38 @@
             <div style="padding:24px; border-top:1px solid var(--border); display:flex; gap:16px; flex-wrap:wrap;">
                 <button id="btn-download-pdf" class="btn-primary" style="flex:1;">Descargar PDF</button>
                 <button id="btn-clear-history" class="btn-secondary" style="border-color:var(--danger); color:var(--danger);">Limpiar Historial</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Planilla -->
+    <div id="planilla-modal" class="modal-overlay hidden">
+        <div class="modal" style="max-width: 800px; width: 95%;">
+            <header class="modal-header">
+                <h2>Planilla de Ventas</h2>
+                <button id="btn-close-planilla" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-content" id="planilla-content" style="padding:0;">
+                <!-- Se inyectará la planilla aquí -->
+            </div>
+            <div style="padding:24px; border-top:1px solid var(--border); display:flex; gap:16px; flex-wrap:wrap;">
+                <button id="btn-print-planilla" class="btn-primary" style="flex:1;">Descargar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Stock Diario -->
+    <div id="daily-stock-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <header class="modal-header">
+                <h2>Stock Diario</h2>
+                <button id="btn-close-stock" class="btn-close">&times;</button>
+            </header>
+            <div class="modal-content" id="stock-content">
+                <!-- Se inyectará el formulario aquí -->
+            </div>
+            <div style="padding:24px; border-top:1px solid var(--border); display:flex; gap:16px;">
+                <button id="btn-save-stock" class="btn-primary" style="flex:1;">Guardar Stock</button>
             </div>
         </div>
     </div>
