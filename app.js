@@ -6,16 +6,18 @@ const QR_BASE64 = "qr.jpeg";
 
 
 const defaultProducts = [
-    { id: 1, name: "Alfajor Vainilla", price: 7.00, stock: 100, icon: "🥮" },
+    { id: 1, name: "Alfajor Vainilla", price: 8.00, stock: 100, icon: "🥮" },
     { id: 2, name: "Alfajor Chocolate", price: 10.00, stock: 100, icon: "🍫" },
-    { id: 3, name: "Tres leche", price: 12.00, stock: 100, icon: "🍰" },
+    { id: 3, name: "Tres leche Vaso", price: 17.00, stock: 100, icon: "🍰" },
     { id: 4, name: "Pie de limón", price: 12.00, stock: 100, icon: "🍋" },
     { id: 5, name: "Cupcake", price: 12.00, stock: 100, icon: "🧁" },
     { id: 6, name: "Torta Matilda", price: 17.00, stock: 100, icon: "🎂" },
     { id: 7, name: "Gelatina", price: 5.00, stock: 100, icon: "🍮" },
     { id: 8, name: "Budin", price: 7.00, stock: 100, icon: "🍞" },
     { id: 9, name: "Torta personal", price: 40.00, stock: 100, icon: "🍰" },
-    { id: 10, name: "Torta mediana", price: 150.00, stock: 100, icon: "🎂" }
+    { id: 10, name: "Torta mediana", price: 150.00, stock: 100, icon: "🎂" },
+    { id: 11, name: "Torta Chocolate Vaso", price: 17.00, stock: 100, icon: "🍫" },
+    { id: 12, name: "Torta Mixta Vaso", price: 17.00, stock: 100, icon: "🍰" }
 ];
 
 let products = [];
@@ -40,6 +42,14 @@ function init() {
     document.getElementById('btn-close-summary').addEventListener('click', closeSummary);
     document.getElementById('btn-download-pdf').addEventListener('click', downloadPDF);
     document.getElementById('btn-clear-history').addEventListener('click', clearHistory);
+    
+    document.getElementById('btn-planilla').addEventListener('click', openPlanilla);
+    document.getElementById('btn-close-planilla').addEventListener('click', closePlanilla);
+    document.getElementById('btn-print-planilla').addEventListener('click', printPlanilla);
+    
+    document.getElementById('btn-stock').addEventListener('click', openDailyStock);
+    document.getElementById('btn-close-stock').addEventListener('click', closeDailyStock);
+    document.getElementById('btn-save-stock').addEventListener('click', saveDailyStock);
     
     document.getElementById('qr-image').addEventListener('click', openQRModal);
     document.getElementById('btn-close-qr').addEventListener('click', closeQRModal);
@@ -67,7 +77,23 @@ function togglePaymentMethod(e) {
 function loadData() {
     const storedProducts = localStorage.getItem('caramel_products_v2');
     if (storedProducts) {
-        products = JSON.parse(storedProducts);
+        let parsedProducts = JSON.parse(storedProducts);
+        // Sincronizar nombres y precios desde defaultProducts por si hubo actualización
+        products = parsedProducts.map(p => {
+            const dp = defaultProducts.find(d => d.id === p.id);
+            if (dp) {
+                return { ...p, name: dp.name, price: dp.price, icon: dp.icon };
+            }
+            return p;
+        });
+        
+        // Agregar nuevos productos que no existan en localStorage
+        defaultProducts.forEach(dp => {
+            if (!products.find(p => p.id === dp.id)) {
+                products.push({...dp});
+            }
+        });
+        
     } else {
         products = [...defaultProducts];
         saveProducts();
@@ -441,6 +467,151 @@ function showToast(message) {
     setTimeout(() => {
         toast.classList.add('hidden');
     }, 3000);
+}
+
+// ====== Planilla Modal ======
+function openPlanilla() {
+    const content = document.getElementById('planilla-content');
+    
+    let itemsCount = {};
+    let totalQR = 0;
+    let totalBS = 0;
+    
+    transactions.forEach(t => {
+        if (t.paymentMethod === 'QR') {
+            totalQR += t.total;
+        } else {
+            totalBS += t.total;
+        }
+        
+        t.items.forEach(i => {
+            if (!itemsCount[i.id]) {
+                itemsCount[i.id] = { qty: 0 };
+            }
+            itemsCount[i.id].qty += i.qty;
+        });
+    });
+    
+    const grandTotal = totalQR + totalBS;
+    const today = new Date().toLocaleString('es-ES', { dateStyle: 'short' });
+    
+    let tableRows = products.map(p => {
+        let qtySold = itemsCount[p.id] ? itemsCount[p.id].qty : 0;
+        let sa = p.stock + qtySold;
+        
+        // Construir string detalle ej: "+ 17 + 17 + 17"
+        let detalleArr = Array(qtySold).fill(p.price);
+        let detalleStr = detalleArr.join(' + ');
+        if (detalleStr !== '') {
+            detalleStr = '+ ' + detalleStr;
+        }
+        
+        return `<tr>
+            <td style="text-align:left; border-right:1px solid #ccc; padding:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;" title="${p.name}">${p.name}</td>
+            <td style="border-right:1px solid #ccc; padding:6px;">${sa}</td>
+            <td style="border-right:1px solid #ccc; padding:6px;"></td>
+            <td style="border-right:1px solid #ccc; padding:6px;"></td>
+            <td style="text-align:left; font-size:12px; color:#555; border-right:1px solid #ccc; padding:6px; letter-spacing:-0.5px;">${detalleStr}</td>
+            <td style="font-weight:bold; color:var(--primary); padding:6px;">${p.stock}</td>
+        </tr>`;
+    }).join('');
+
+    content.innerHTML = `
+        <div id="pdf-planilla" style="padding: 20px; background: white; color: black; font-family: sans-serif;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; font-size:14px; text-transform:uppercase;">
+                <span>FECHA: ${today}</span>
+                <span style="font-size:16px; text-decoration:underline;">Planilla de ventas</span>
+                <span>AGENCIA: S.D.</span>
+            </div>
+            
+            <table style="width:100%; border-collapse:collapse; text-align:center; font-size:13px; border: 1px solid #ccc;">
+                <thead>
+                    <tr style="background:#f4f4f4; border-bottom:1px solid #ccc;">
+                        <th style="border-right:1px solid #ccc; padding:6px; width:30%;">PRODUCTO</th>
+                        <th style="border-right:1px solid #ccc; padding:6px; width:8%; font-size:11px;">S.A</th>
+                        <th style="border-right:1px solid #ccc; padding:6px; width:8%; font-size:11px;">ENT.<br>1</th>
+                        <th style="border-right:1px solid #ccc; padding:6px; width:8%; font-size:11px;">ENT.<br>2</th>
+                        <th style="border-right:1px solid #ccc; padding:6px; width:36%;">DETALLE</th>
+                        <th style="padding:6px; width:10%;">SALDO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+            
+            <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                <div style="text-align:right; font-size:14px; font-weight:bold; line-height:1.6;">
+                    <div>VENTA QR: <span style="display:inline-block; width:80px; border-bottom:1px solid #000; text-align:center;">${totalQR.toFixed(0)}</span></div>
+                    <div>VENTA BS: <span style="display:inline-block; width:80px; border-bottom:1px solid #000; text-align:center;">${totalBS.toFixed(0)}</span></div>
+                    <div>VENTA TOTAL: <span style="display:inline-block; width:80px; border-bottom:1px solid #000; text-align:center;">${grandTotal.toFixed(0)}</span></div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('planilla-modal').classList.remove('hidden');
+}
+
+function closePlanilla() {
+    document.getElementById('planilla-modal').classList.add('hidden');
+}
+
+function printPlanilla() {
+    const element = document.getElementById('pdf-planilla');
+    const opt = {
+      margin:       0.3,
+      filename:     'Planilla_Ventas_Caramel.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    if (typeof html2pdf === 'undefined') {
+        alert("La librería de PDF no pudo cargar. Comprueba tu conexión a internet.");
+        return;
+    }
+    
+    html2pdf().set(opt).from(element).save();
+}
+
+// ====== Modal Stock Diario ======
+function openDailyStock() {
+    const content = document.getElementById('stock-content');
+    
+    let html = '<div class="stock-form" style="display:flex; flex-direction:column; gap:10px;">';
+    
+    products.forEach(p => {
+        html += `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f9f9f9; border-radius:8px;">
+                <span style="font-weight:600;">${p.name}</span>
+                <input type="number" id="stock-input-${p.id}" value="${p.stock}" min="0" style="width:80px; padding:8px; border:1px solid #ccc; border-radius:4px; text-align:center;">
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    content.innerHTML = html;
+    
+    document.getElementById('daily-stock-modal').classList.remove('hidden');
+}
+
+function closeDailyStock() {
+    document.getElementById('daily-stock-modal').classList.add('hidden');
+}
+
+function saveDailyStock() {
+    products.forEach(p => {
+        const input = document.getElementById(`stock-input-${p.id}`);
+        if (input) {
+            p.stock = parseInt(input.value) || 0;
+        }
+    });
+    
+    saveProducts();
+    renderProducts();
+    closeDailyStock();
+    showToast("Stock actualizado correctamente");
 }
 
 // Inicializar al cargar
